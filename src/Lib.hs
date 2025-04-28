@@ -7,7 +7,7 @@ data Personaje = UnPersonaje {
     poderBasico :: String, 
     superPoder :: String,
     superPoderActivo :: Bool,
-    cantidadVida :: Int
+    vida :: Int
     } deriving Show
 
 
@@ -17,7 +17,7 @@ espina = UnPersonaje{
         poderBasico = "Bola de Espinas",
         superPoder = "Granada de Espinas",
         superPoderActivo = True,
-        cantidadVida = 4800
+        vida = 4800
 
     }
 
@@ -27,7 +27,9 @@ pamela = UnPersonaje{
     poderBasico = "Lluevia de tuercas sanadoras",
     superPoder = "Torreta Curativa",
     superPoderActivo = False,
-    cantidadVida = 9600
+    vida = 9600
 }
 
- 
+bolaEspinosa :: Personaje -> Int
+bolaEspinosa personaje = (vida personaje) - 1000
+
