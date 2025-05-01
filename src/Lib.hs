@@ -69,4 +69,9 @@ granadaDeEspinas radioExplosion personaje
     | vida personaje < 800 = (modificarSuperYVida 0 False personaje)
     | otherwise = bolaEspinosa personaje
 
+{-torretaCurativa: le activa el súper a su aliado y lo deja con el doble de su salud inicial.-}
+
+torretaCurativa :: Personaje -> Bool -> Personaje
+torretaCurativa personaje esAliado
+    |esAliado == True = modificarSuperYVida (vida personaje * 2) True personaje
 
