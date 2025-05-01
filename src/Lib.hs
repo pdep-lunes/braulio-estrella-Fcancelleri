@@ -41,27 +41,32 @@ las segundas le disminuyen a la mitad la vida de quien sea su contrincante.
 En cualquier otro caso, no le pasa nada al personaje.
 -}
 
-lluviaDeTuercasDañinas :: Personaje -> Personaje
+lluviaDeTuercas :: Personaje -> Bool -> Personaje
+lluviaDeTuercas personaje esColega
+    |esColega == True = modificarVida (vida personaje + 800) personaje
+    |esColega == False = modificarVida ((vida personaje) /2) personaje
+
+{-lluviaDeTuercasDañinas :: Personaje -> Personaje
 lluviaDeTuercasDañinas personaje = modificarVida ((vida personaje) /2) personaje
 
 lluviaDeTuercasSanadoras :: Personaje -> Personaje
-lluviaDeTuercasSanadoras personaje = modificarVida (vida personaje + 800) personaje
+lluviaDeTuercasSanadoras personaje = modificarVida (vida personaje + 800) personaje-}
 
 {-granadaDeEspinas: el daño va a depender del radio de explosión de la misma. 
 Si es mayor a 3, le agregara a su nombre “Espina estuvo aquí”. 
 Si además su contrincante tiene menos de 800 vida, desactiva su súper y lo deja con 0 de vida. 
 En otro caso, se usa una bola de espinas.
 -}
+modificarSuperYVida :: Float -> Bool -> Personaje -> Personaje
+modificarSuperYVida nuevaVida ulti (UnPersonaje nombre poderBasico superPoder _ _) = UnPersonaje nombre poderBasico superPoder ulti nuevaVida
+
+modificarNombre :: Personaje -> Personaje
+modificarNombre (UnPersonaje nombre poderBasico superPoder superPoderActivo vida) = UnPersonaje (nombre ++ ", Espina estuvo aqui") poderBasico superPoder superPoderActivo vida
 
 granadaDeEspinas :: Float -> Personaje -> Personaje
 granadaDeEspinas radioExplosion personaje
-    | radioExplosion > 3 = agregarANombre personaje "Espina estuvo aqui"
-    | vida personaje < 800 = eliminarContrincante personaje
+    | radioExplosion > 3 = modificarNombre personaje
+    | vida personaje < 800 = (modificarSuperYVida 0 False personaje)
     | otherwise = bolaEspinosa personaje
 
-agregarANombre :: Personaje -> String -> Personaje
-agregarANombre (UnPersonaje nombre poderBasico superPoder superPoderActivo vida ) fraseAAgregar = UnPersonaje (nombre ++ fraseAAgregar) poderBasico superPoder superPoderActivo vida 
-
-eliminarContrincante :: Personaje -> Personaje
-eliminarContrincante (UnPersonaje nombre poderBasico superPoder _ _) = UnPersonaje nombre poderBasico superPoder False  0
 
