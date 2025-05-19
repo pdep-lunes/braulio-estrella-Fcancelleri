@@ -6,7 +6,7 @@ type Poder = Personaje -> Personaje
 
 data Personaje = UnPersonaje {
     nombre :: String,
-    poder :: [Poder],
+    poder :: Poder,
     superPoder :: Poder,
     superPoderActivo :: Bool,
     vida :: Int
@@ -16,7 +16,7 @@ data Personaje = UnPersonaje {
 espina :: Personaje
 espina = UnPersonaje{
         nombre = "Spike",
-        poder = [bolaEspinosa],
+        poder = bolaEspinosa,
         superPoder = (granadaDeEspinas 5),
         superPoderActivo = True,
         vida = 4800
@@ -25,7 +25,7 @@ espina = UnPersonaje{
 pamela :: Personaje
 pamela = UnPersonaje{
     nombre = "Pam",
-    poder = [lluviaTuercasSanadoras,lluviaTuercasDañinas],
+    poder = lluviaTuercasDañinas,
     superPoder = torretaCurativa,
     superPoderActivo = False,
     vida = 9600
@@ -36,9 +36,9 @@ cambiarVida :: (Int -> Int) -> Personaje -> Personaje
 cambiarVida fn unPersonaje = unPersonaje {vida = ((fn.vida) unPersonaje)}
 
 agregarANombre :: (String -> String) -> Personaje -> Personaje
-agregarANombre fn unPersonaje = unPersonaje {nombre = nombre ++ fn}
+agregarANombre fn unPersonaje = unPersonaje {nombre = (fn.nombre) unPersonaje}
 
-cambiarSuper :: (Bool -> Bool) -> Personaje -> Personaje
+cambiarSuper :: Bool -> Personaje -> Personaje
 cambiarSuper fn unPersonaje = unPersonaje {superPoderActivo = fn}
 
 --PODERES Y SUPERPODERES
@@ -57,8 +57,6 @@ En cualquier otro caso, no le pasa nada al personaje.
 lluviaTuercasDañinas :: Poder
 lluviaTuercasDañinas unPersonaje  = (cambiarVida(subtract (div (vida unPersonaje) 2)) unPersonaje)
 
-lluviaTuercasSanadoras :: Poder
-lluviaTuercasSanadoras unPersonaje = (cambiarVida(+800) unPersonaje)
 
 {-granadaDeEspinas: el daño va a depender del radio de explosión de la misma. 
 Si es mayor a 3, le agregara a su nombre “Espina estuvo aquí”. 
@@ -66,9 +64,9 @@ Si además su contrincante tiene menos de 800 vida, desactiva su súper y lo dej
 En otro caso, se usa una bola de espinas.
 -}
 
-granadaDeEspinas :: (Int -> Int) -> Poder
+granadaDeEspinas :: Int -> Poder
 granadaDeEspinas radioExplosion unPersonaje 
-    |radioExplosion > 3 && vida UnPersonaje < 800 = (agregarANombre ("Espina estuvo aqui").cambiarSuper (False).cambiarVida (subtract (vida unPersonaje))) unPersonaje
+    |radioExplosion > 3 && vida unPersonaje < 800 = (agregarANombre (++"Espina estuvo aqui").cambiarSuper(False).cambiarVida (subtract (vida unPersonaje))) unPersonaje
     |otherwise = bolaEspinosa unPersonaje
 
 {-
@@ -86,7 +84,7 @@ entonces va a atacar a su contrincante con el súper y con el básico. Si no, no
 
 atacarConPoderEspecial :: Personaje -> Poder
 atacarConPoderEspecial unContrincante unPersonaje
-    |superPoderActivo unPersonaje = (superPoder unPersonaje).(poder unPersonaje) unContrincante
+    |superPoderActivo unPersonaje = ((superPoder unPersonaje).(poder unPersonaje)) unContrincante
     |otherwise = unContrincante
 
 {-
@@ -101,4 +99,4 @@ estanEnLasUltimas :: [Personaje] -> [String]
 estanEnLasUltimas personajes = nombresDePersonajesQueEstanLasUltimas personajes
 
 nombresDePersonajesQueEstanLasUltimas :: [Personaje] -> [String]
-nombresDePersonajesQueEstanLasUltimas personajes = (map nombre) . filter (personajesQueEstanEnLasUltimas) personajes
+nombresDePersonajesQueEstanLasUltimas personajes = (map (nombre) . filter (personajesQueEstanEnLasUltimas)) personajes
