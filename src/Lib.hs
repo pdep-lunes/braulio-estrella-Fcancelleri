@@ -4,7 +4,6 @@ import Text.Show.Functions ()
 
 type Poder = Personaje -> Personaje
 
-
 data Personaje = UnPersonaje {
     nombre :: String,
     poder :: [Poder],
@@ -18,7 +17,7 @@ espina :: Personaje
 espina = UnPersonaje{
         nombre = "Spike",
         poder = [bolaEspinosa],
-        superPoder = granadaDeEspinas(5),
+        superPoder = (granadaDeEspinas 5),
         superPoderActivo = True,
         vida = 4800
     }
@@ -68,15 +67,17 @@ En otro caso, se usa una bola de espinas.
 -}
 
 granadaDeEspinas :: (Int -> Int) -> Poder
-granadaDeEspinas RadioExplosion unPersonaje 
-    |RadioExplosion > 3 && vida UnPersonaje < 800 = (agregarANombre("Espina estuvo aqui").cambiarSuper(False).cambiarVida(subtract (vida unPersonaje))) unPersonaje
+granadaDeEspinas radioExplosion unPersonaje 
+    |radioExplosion > 3 && vida UnPersonaje < 800 = (agregarANombre ("Espina estuvo aqui").cambiarSuper (False).cambiarVida (subtract (vida unPersonaje))) unPersonaje
     |otherwise = bolaEspinosa unPersonaje
+
 {-
 torretaCurativa: le activa el súper a su aliado y lo deja con el doble de su salud inicial.
 -}
 
 torretaCurativa :: Poder
-torretaCurativa unPersonaje = (cambiarSuper(True).cambiarVida(*2)) unPersonaje
+torretaCurativa unPersonaje = (cambiarSuper (True).cambiarVida(*2)) unPersonaje
+
 
 --REPORTES
 
@@ -85,7 +86,7 @@ entonces va a atacar a su contrincante con el súper y con el básico. Si no, no
 
 atacarConPoderEspecial :: Personaje -> Poder
 atacarConPoderEspecial unContrincante unPersonaje
-    |superPoderActivo unPersonaje = ((superPoder unPersonaje).(poder unPersonaje) unContrincante)
+    |superPoderActivo unPersonaje = (superPoder unPersonaje).(poder unPersonaje) unContrincante
     |otherwise = unContrincante
 
 {-
@@ -99,5 +100,5 @@ personajesQueEstanEnLasUltimas unPersonaje = (vida unPersonaje) < 800
 estanEnLasUltimas :: [Personaje] -> [String]
 estanEnLasUltimas personajes = nombresDePersonajesQueEstanLasUltimas personajes
 
-nombresDePersonajesQueEstanLasUltimas :: [Personajes] -> [String]
-nombresDePersonajesQueEstanLasUltimas personajes = (map (nombre) . filter (personajesQueEstanEnLasUltimas)) Personajes
+nombresDePersonajesQueEstanLasUltimas :: [Personaje] -> [String]
+nombresDePersonajesQueEstanLasUltimas personajes = (map nombre) . filter (personajesQueEstanEnLasUltimas) personajes
